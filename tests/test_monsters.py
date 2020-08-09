@@ -18,7 +18,6 @@ def create_monster_category(category_name):
     db.session.add(MonsterCategories(category=category_name))
     db.session.commit()
 
-
 class TestMonsterModel(BaseTestCase):
     def test_create_monster_data(self):
         create_monster("test")
