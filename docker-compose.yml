@@ -5,5 +5,11 @@ services:
         build: .
         volumes:
             - .:/app
+        environment: 
+            - FLASK_ENV=development
+            - FLASK_APP=app.py
+            - FLASK_RUN_HOST=0.0.0.0
+            - SQLALCHEMY_DATABASE_URI=sqlite:///
+            - SQLALCHEMY_TRACK_MODIFICATIONS=False
         ports:
             - 5000:5000
