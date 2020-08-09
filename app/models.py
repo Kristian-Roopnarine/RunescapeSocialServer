@@ -5,21 +5,17 @@ class Monster(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String,nullable=False,unique=True)
 
-"""
-Monster - (Foreign Key)
-amount - integer
-category - integer/string
-"""
 class MonsterCategories(db.Model):
-    __table__name = "monster_category"
+    __tablename__ = "monster_category"
     id = db.Column(db.Integer,primary_key=True)
     category = db.Column(db.String,unique=True)
 
 class MonsterLog(db.Model):
-    __table__name = "monster_logs"
+    __tablename__ = "monster_logs"
     id=db.Column(db.Integer,primary_key=True)
     amount = db.Column(db.Integer)
-    # foreign key to monster
-    monster_id = db.Column(db.Integer,db.ForeignKey('monster_id'),nullable=False)
-    # forgien key to monstercategory 
-    monster_category_id = db.Column(db.Integer,db.ForeignKey('monstercategories_id',nullable=False))
+    monster_id = db.Column(db.Integer,db.ForeignKey('monster_info.id'),nullable=False)
+    monster = db.relationship('Monster',backref=db.backref('monster_logs',lazy=True))
+    
+    monster_category_id = db.Column(db.Integer,db.ForeignKey('monster_category.id'),nullable=False)
+    monster_category = db.relationship('MonsterCategories',backref=db.backref('monster_categories',lazy=True))
