@@ -2,9 +2,10 @@ version: '3.8'
 
 services:
     web:
+        container_name: rs-backend
         build: .
         volumes:
-            - .:/app
+            - .:/work
         environment: 
             - FLASK_ENV=development
             - FLASK_APP=app.py
