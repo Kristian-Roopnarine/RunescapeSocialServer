@@ -40,7 +40,7 @@ def edit_monster(id):
     if request.method == 'DELETE':
         db.session.delete(monster)
         return jsonify({'monster':f'{monster.name} was successfully deleted.'})
-    else:
+    elif request.method == 'PUT':
         monster.name = request.json.get('name',monster.name)
         db.session.commit()
         return jsonify(monster.serialize)
