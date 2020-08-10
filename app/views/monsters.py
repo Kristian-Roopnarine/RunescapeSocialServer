@@ -16,7 +16,7 @@ def all_monsters():
 
 @monster_blueprint.route('/<int:id>/',methods=['GET'])
 def get_monster(id):
-    monster = Monster.query.get(id)
+    monster = Monster.query.get_or_404(id)
     return jsonify(monster.serialize)
     
 
@@ -30,18 +30,17 @@ def create_monster():
 
     monster = Monster(name=request.json.get('name'))
     db.session.add(monster)
-    db.commit()
-    return jsonify(monster)
+    db.session.commit()
+    return jsonify(monster.serialize)
 
 @monster_blueprint.route('/<int:id>/',methods=['PUT','DELETE'])
 def edit_monster(id):
-    if not request.json:
-        abort(400)
-
-    monster = Monster.query.filter_by(id=id).get_or_404(description="That monster does not exist.")
+    
+    monster = Monster.query.get_or_404(id,description="That monster does not exist.")
     if request.method == 'DELETE':
         db.session.delete(monster)
+        return jsonify({'monster':f'{monster.name} was successfully deleted.'})
     else:
         monster.name = request.json.get('name',monster.name)
         db.session.commit()
-        return jsonify(monster)
+        return jsonify(monster.serialize)

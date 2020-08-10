@@ -25,7 +25,29 @@ def get_all_monsters(self):
 def get_monster_with_id(self,monster_id):
     return self.client.get(f"/monsters/{monster_id}/")
 
+def create_monster_endpoint(self,name):
+    return self.client.post(
+        '/monsters/',
+        data = json.dumps(dict(
+            name=name
+        )),
+        content_type="application/json"
+    )
+
+def update_monster_endpoint(self,id):
+    return self.client.put(
+        f'/monsters/{id}/',
+        data = json.dumps(dict(
+            name="Vorkath"
+        )),
+        content_type="application/json"
+    )
+
+def delete_monster_endpoint(self,id):
+    return self.client.delete(f'/monsters/{id}/')
+
 class TestMonsterModel(BaseTestCase):
+
     def test_create_monster_data(self):
         create_monster("test")
         monster = Monster.query.get(1)
@@ -61,6 +83,7 @@ class TestMonsterModel(BaseTestCase):
 
 
 class TestMonsterBlueprint(BaseTestCase):
+
     def test_get_all_monsters(self):
         create_monster("Zulrah")
         create_monster("Vorkath")
@@ -76,6 +99,38 @@ class TestMonsterBlueprint(BaseTestCase):
         monster = json.loads(response.data)
         self.assertEqual(response.status_code,200)
         self.assertEqual(monster['name'],"Zulrah")
+
+    def test_get_monster_when_id_does_not_exist(self):
+        create_monster("Zulrah")
+        response = get_monster_with_id(self,2)
+        self.assertEqual(response.status_code,404)
+
+    def test_create_monster_endpoint(self):
+        response = create_monster_endpoint(self,"Zulrah")
+        self.assertEqual(response.status_code,200)
+        monster = json.loads(response.data)
+        self.assertEqual(monster['name'],"Zulrah")
+    
+    def test_create_monster_no_name(self):
+        response = create_monster_endpoint(self,"")
+        self.assertEqual(response.status_code,400)
+    
+    def test_update_monster_name(self):
+        create_monster("Zulrah")
+        response = update_monster_endpoint(self,1)
+        self.assertEqual(response.status_code,200)
+        updated_monster = Monster.query.get(1)
+        self.assertEqual(updated_monster.name,"Vorkath")
+
+    def test_delete_monster(self):
+        create_monster("Zulrah")
+        create_monster("Vorkath")
+        response = delete_monster_endpoint(self,1)
+        self.assertEqual(response.status_code,200)
+        response = delete_monster_endpoint(self,2)
+        self.assertEqual(response.status_code,200)
+
+
 
 if __name__ == "__main__":
     unittest.main()
