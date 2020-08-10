@@ -1,7 +1,8 @@
 from flask_testing import TestCase
+from flask import jsonify
 import sys
 import unittest
-
+import json
 sys.path.append('./')
 from app.models import Monster,db, MonsterCategories,MonsterLog
 from base import BaseTestCase
@@ -17,6 +18,12 @@ def create_monster(entered_name):
 def create_monster_category(category_name):
     db.session.add(MonsterCategories(category=category_name))
     db.session.commit()
+
+def get_all_monsters(self):
+    return self.client.get('/monsters/')
+
+def get_monster_with_id(self,monster_id):
+    return self.client.get(f"/monsters/{monster_id}/")
 
 class TestMonsterModel(BaseTestCase):
     def test_create_monster_data(self):
@@ -51,6 +58,24 @@ class TestMonsterModel(BaseTestCase):
         self.assertEqual(monster_record.amount,5)
         self.assertEqual(monster_record.monster.name,"Zulrah")
         self.assertEqual(monster_record.monster_category.category,"Bossing")
+
+
+class TestMonsterBlueprint(BaseTestCase):
+    def test_get_all_monsters(self):
+        create_monster("Zulrah")
+        create_monster("Vorkath")
+        create_monster("Barrows")
+        create_monster("Olm")
+        response = get_all_monsters(self)
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(len(json.loads(response.data)),4)
+    
+    def test_get_monster_with_id(self):
+        create_monster("Zulrah")
+        response = get_monster_with_id(self,1)
+        monster = json.loads(response.data)
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(monster['name'],"Zulrah")
 
 if __name__ == "__main__":
     unittest.main()
