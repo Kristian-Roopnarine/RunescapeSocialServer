@@ -8,7 +8,6 @@ monster_blueprint = Blueprint("monster_blueprint",__name__,url_prefix="/monsters
 
 # CRUD for monster information
 
-
 @monster_blueprint.route('/',methods=['GET'])
 def all_monsters():
     monster_list = Monster.query.all()
@@ -19,7 +18,6 @@ def get_monster(id):
     monster = Monster.query.get_or_404(id)
     return jsonify(monster.serialize)
     
-
 @monster_blueprint.route('/',methods=['POST'])
 def create_monster():
     if not request.json:
@@ -28,7 +26,7 @@ def create_monster():
     if 'name' not in request.json or request.json.get('name') == '':
         abort(400)
 
-    monster = Monster(name=request.json.get('name'))
+    monster = Monster(name=request.json.get('name'),level=request.json.get("combat_level"))
     db.session.add(monster)
     db.session.commit()
     return jsonify(monster.serialize)
