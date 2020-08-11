@@ -4,7 +4,7 @@ import sys
 import unittest
 import json
 sys.path.append('./')
-from app.models import Monster,db, MonsterCategories,MonsterLog
+from app.models import Monster,db
 from base import BaseTestCase
 from sqlalchemy.exc import IntegrityError
 
@@ -13,10 +13,6 @@ TEST_DB = "test.db"
 
 def create_monster(entered_name):
     db.session.add(Monster(name=entered_name))
-    db.session.commit()
-
-def create_monster_category(category_name):
-    db.session.add(MonsterCategories(category=category_name))
     db.session.commit()
 
 def get_all_monsters(self):
@@ -59,15 +55,8 @@ class TestMonsterModel(BaseTestCase):
         create_monster("test")
         self.assertRaises(IntegrityError,create_monster,"test")
 
-    def test_monster_category_create(self):
-        create_monster_category("Bossing")
-        mon_category = MonsterCategories.query.get(1)
-        self.assertEqual(mon_category.category,"Bossing")
-    
-    def test_monster_category_unique_constraint(self):
-        create_monster_category("Bossing")
-        self.assertRaises(IntegrityError,create_monster_category,"Bossing")
-
+"""
+TODO: move to monster log tests
     def test_create_monster_log(self):
         create_monster("Zulrah")
         create_monster_category("Bossing")
@@ -80,7 +69,7 @@ class TestMonsterModel(BaseTestCase):
         self.assertEqual(monster_record.amount,5)
         self.assertEqual(monster_record.monster.name,"Zulrah")
         self.assertEqual(monster_record.monster_category.category,"Bossing")
-
+"""
 
 class TestMonsterBlueprint(BaseTestCase):
 
