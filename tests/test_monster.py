@@ -58,21 +58,6 @@ class TestMonsterModel(BaseTestCase):
         create_monster("test",700,705)
         self.assertRaises(IntegrityError,create_monster,"test",700,705)
 
-"""
-TODO: move to monster log tests
-    def test_create_monster_log(self):
-        create_monster("Zulrah")
-        create_monster_category("Bossing")
-        zulrah = Monster.query.get(1)
-        monster_category = MonsterCategories.query.get(1)
-        monster_record = MonsterLog(amount=5,monster=zulrah,monster_category=monster_category)
-        db.session.add(monster_record)
-        db.session.commit()
-        monster_record = MonsterLog.query.get(1)
-        self.assertEqual(monster_record.amount,5)
-        self.assertEqual(monster_record.monster.name,"Zulrah")
-        self.assertEqual(monster_record.monster_category.category,"Bossing")
-"""
 
 class TestMonsterBlueprint(BaseTestCase):
 
@@ -121,6 +106,8 @@ class TestMonsterBlueprint(BaseTestCase):
         self.assertEqual(response.status_code,200)
         response = delete_monster_endpoint(self,701)
         self.assertEqual(response.status_code,200)
+        response = get_monster_with_id(self,701)
+        self.assertEqual(response.status_code,404)
 
 
 

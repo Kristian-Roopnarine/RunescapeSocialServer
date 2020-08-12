@@ -34,6 +34,7 @@ def edit_or_delete(id):
     category = MonsterCategories.query.get_or_404(id)
     if request.method == 'DELETE':
         db.session.delete(category)
+        db.session.commit()
         return jsonify({'category':f'{category.category} was successfully deleted.'})
     elif request.method == 'PUT':
         category.category = request.json.get('category',category.category)

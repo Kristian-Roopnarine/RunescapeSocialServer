@@ -39,6 +39,7 @@ def edit_monster(id):
     monster = Monster.query.filter_by(monster_id=id).first_or_404(description="That monster does not exist.")
     if request.method == 'DELETE':
         db.session.delete(monster)
+        db.session.commit()
         return jsonify({'monster':f'{monster.name} was successfully deleted.'})
     elif request.method == 'PUT':
         monster.name = request.json.get('name',monster.name)
