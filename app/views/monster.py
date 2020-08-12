@@ -15,18 +15,20 @@ def all_monsters():
 
 @monster_blueprint.route('/<int:id>/',methods=['GET'])
 def get_monster(id):
-    monster = Monster.query.get_or_404(id)
+    monster = Monster.query.filter_by(monster_id=id).first_or_404(description = "Could not find the monster.")
     return jsonify(monster.serialize)
     
 @monster_blueprint.route('/',methods=['POST'])
 def create_monster():
+
     if not request.json:
         abort(400)
 
+    # handle verification on front end
     if 'name' not in request.json or request.json.get('name') == '':
         abort(400)
 
-    monster = Monster(name=request.json.get('name'),level=request.json.get("combat_level"))
+    monster = Monster(name=request.json.get('name'),level=request.json.get("combat_level"),monster_id=request.json.get('monster_id'))
     db.session.add(monster)
     db.session.commit()
     return jsonify(monster.serialize)
@@ -34,7 +36,7 @@ def create_monster():
 @monster_blueprint.route('/<int:id>/',methods=['PUT','DELETE'])
 def edit_monster(id):
     
-    monster = Monster.query.get_or_404(id,description="That monster does not exist.")
+    monster = Monster.query.filter_by(monster_id=id).first_or_404(description="That monster does not exist.")
     if request.method == 'DELETE':
         db.session.delete(monster)
         return jsonify({'monster':f'{monster.name} was successfully deleted.'})
