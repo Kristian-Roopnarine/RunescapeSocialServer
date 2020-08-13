@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS,cross_origin
 
 db = SQLAlchemy()
 
@@ -10,6 +11,7 @@ def create_app():
     from .views.monster_log import monster_log_blueprint
 
     app = Flask(__name__,instance_relative_config=False)
+    CORS(app)
     app.config.from_object('config.Config')
     db.init_app(app)
 
