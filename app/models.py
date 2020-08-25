@@ -6,6 +6,7 @@ class Monster(db.Model):
     name = db.Column(db.String,nullable=False)
     level = db.Column(db.Integer,nullable=False)
     monster_id = db.Column(db.Integer,nullable=False,unique=True)
+    monster_logs = db.relationship('MonsterLog',backref='monster')
 
     @property
     def serialize(self):
@@ -20,6 +21,7 @@ class MonsterCategories(db.Model):
     __tablename__ = "monster_category"
     id = db.Column(db.Integer,primary_key=True)
     category = db.Column(db.String,unique=True)
+    monster_logs = db.relationship('MonsterLog',backref='monster_category')
 
     @property
     def serialize(self):
@@ -34,10 +36,7 @@ class MonsterLog(db.Model):
     amount = db.Column(db.Integer)
 
     monster_id = db.Column(db.Integer,db.ForeignKey('monster_info.monster_id'),nullable=False)
-    monster = db.relationship('Monster',backref=db.backref('monster_info',lazy=True))
-    
     monster_category_id = db.Column(db.Integer,db.ForeignKey('monster_category.id'),nullable=False)
-    monster_category = db.relationship('MonsterCategories',backref=db.backref('monster_category',lazy=True))
 
     @property
     def serialize(self):
